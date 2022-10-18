@@ -1,4 +1,4 @@
-// import { User } from '@models/User';
+import { User } from '@models/User';
 
 export class UsersController {
   private str = 'foo';
@@ -9,8 +9,9 @@ export class UsersController {
 
   public teste(): number {
     // const user = new User();
-    // const whos = new User();
+    const whos = new User();
 
+    whos.name = 'John Doe';
     const a = 2;
     const b = 3;
 
