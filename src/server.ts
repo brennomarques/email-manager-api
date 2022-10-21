@@ -1,7 +1,8 @@
 import express from 'express';
+import 'dotenv/config';
 
-const PORT = 3000;
-const HOST = '0.0.0.0';
+const PORT = Number(String(process.env.HOST_PORT));
+const HOST = process.env.HOST_NAME;
 
 const app = express();
 
@@ -10,5 +11,5 @@ app.get('/', (request, response) => response.json({
 }));
 
 app.listen(PORT, HOST, () => {
-  console.log('Back-end started in 3000 port!');
+  console.log(`Back-end started in ${PORT} port! 👈️`);
 });
