@@ -1,37 +1,47 @@
-import { User } from '@models/User';
+import User from '@models/User';
+import { Request, Response } from 'express';
 
-export class UsersController {
-  private str = 'foo';
-
-  private bool = true;
-
-  public gr = 1;
-
-  public teste(): number {
-    // const user = new User();
-    const whos = new User();
-
-    whos.name = 'John Doe';
-    const a = 2;
-    const b = 3;
-
-    let g = a;
-
-    g = a + b;
-    console.log(g);
-    return 1;
+class UsersController {
+  async index(request: Request, response: Response) {
+    try {
+      const users = await User.find();
+      return response.json(users);
+    } catch (error) {
+      return response.status(500).send({
+        error: 'Something wrong happened, try again',
+        message: error,
+      });
+    }
   }
 
-  isCheck(): string {
-    const b = this.teste();
-    const mess = `Menssage${b}`;
-    console.log(b, mess);
+  async store(request: Request, response: Response) {
+    const { name, email, password } = request.body;
+    const status = 0;
 
-    const g = 'ge';
+    try {
+      const userExists = await User.findOne({ email });
 
-    if (g) {
-      return g;
+      if (userExists) {
+        return response.status(400).json({
+          message: 'User already exists',
+        });
+      }
+
+      const user = await User.create({
+        name,
+        email,
+        password,
+        status,
+      });
+
+      return response.json(user);
+    } catch (error) {
+      return response.status(500).send({
+        error: 'Registration failed',
+        message: error,
+      });
     }
-    return 'Ronaldo';
   }
 }
+
+export default new UsersController();
