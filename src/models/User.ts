@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 
 const User = new mongoose.Schema(
   {
@@ -20,11 +20,10 @@ const User = new mongoose.Schema(
       type: String,
       require: true,
       select: false,
-      set: (value) => crypto.createHash('md5').update(value).digest('hex'),
     },
 
     status: {
-      type: String,
+      type: Number,
       require: true,
     },
 
@@ -33,9 +32,19 @@ const User = new mongoose.Schema(
       require: false,
     },
 
+    role: {
+      type: String,
+      require: true,
+    },
+
     avatar: {
       type: String,
       require: false,
+    },
+
+    createdAt: {
+      type: Date,
+      default: Date.now,
     },
 
   },
@@ -46,5 +55,11 @@ const User = new mongoose.Schema(
   },
 
 );
+
+User.pre('save', async function hashPassword(next) {
+  const hash = await bcrypt.hash(this.password, 10);
+  this.password = hash;
+  next();
+});
 
 export default mongoose.model('User', User);
