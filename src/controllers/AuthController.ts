@@ -1,8 +1,8 @@
 import User from '@models/User';
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import { UserData, USER_STATUS } from 'src/core/@types';
+import JwtResources from '@resources/JwtResources';
 
 class AuthController {
   async register(request: Request, response: Response) {
@@ -73,9 +73,7 @@ class AuthController {
         });
       }
 
-      const token = jwt.sign({ id: userExists.id }, process.env.SECRET, { expiresIn: 86400 });
-
-      return response.json({ token_type: 'Bearer', expires_in: 86400, access_token: token });
+      return response.json(await JwtResources.generateToken({ id: userExists.id }));
     } catch (error) {
       return response.status(500).send({
         error: 'Registration failed',
