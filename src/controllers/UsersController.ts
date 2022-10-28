@@ -2,7 +2,7 @@ import User from '@models/User';
 import { Request, Response } from 'express';
 
 class UsersController {
-  async index(request: Request, response: Response) {
+  public async index(request: Request, response: Response) {
     try {
       const users = await User.find();
       return response.json(users);
@@ -14,7 +14,7 @@ class UsersController {
     }
   }
 
-  async store(request: Request, response: Response) {
+  public async store(request: Request, response: Response) {
     const { name, email, password } = request.body;
     const status = 0;
 

@@ -75,7 +75,7 @@ class AuthController {
 
       const token = jwt.sign({ id: userExists.id }, process.env.SECRET, { expiresIn: 86400 });
 
-      return response.json({ token_type: 'bearer', expires_in: 86400, access_token: token });
+      return response.json({ token_type: 'Bearer', expires_in: 86400, access_token: token });
     } catch (error) {
       return response.status(500).send({
         error: 'Registration failed',
