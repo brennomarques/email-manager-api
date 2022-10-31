@@ -8,6 +8,8 @@ const routes = Router();
 // Auth
 routes.post('/register', AuthController.register);
 routes.post('/login', AuthController.login);
+routes.post('/forgot-password', AuthController.forgotPassword);
+routes.post('/recovery-password', AuthController.recoveryPassword);
 
 // User route
 routes.get('/user', authMiddleware, UsersController.index);
