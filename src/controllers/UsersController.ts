@@ -1,8 +1,9 @@
 import User from '@models/User';
 import { Request, Response } from 'express';
+import { Middleware } from 'src/core/@types';
 
 class UsersController {
-  public async index(request: Request, response: Response) {
+  public async show(request: Request, response: Response) {
     try {
       const users = await User.find();
       return response.json(users);
@@ -14,32 +15,28 @@ class UsersController {
     }
   }
 
-  public async store(request: Request, response: Response) {
-    const { name, email, password } = request.body;
-    const status = 0;
+  public async update(request: Middleware.RequestWithUser, response: Response) {
+    const idUser = request.params.id;
+    const resUser = request.idUser;
+
+    const { name, role, avatar } = request.body;
 
     try {
-      const userExists = await User.findOne({ email });
-
-      if (userExists) {
-        return response.status(400).json({
-          message: 'User already exists',
-        });
+      if (idUser !== resUser) {
+        return response.status(400).send({ massage: 'User does not check' });
       }
 
-      const user = await User.create({
-        name,
-        email,
-        password,
-        status,
-      });
+      const userExists = await User.findById(resUser);
 
-      return response.json(user);
-    } catch (error) {
-      return response.status(500).send({
-        error: 'Registration failed',
-        message: error,
-      });
+      if (!userExists) {
+        return response.status(404).json({ message: 'User already exists' });
+      }
+
+      const update = await User.findByIdAndUpdate(idUser, { name, role, avatar }, { new: true });
+
+      return response.status(200).json(update);
+    } catch (err) {
+      return response.status(400).send({ message: 'Error updating user', error: err });
     }
   }
 }

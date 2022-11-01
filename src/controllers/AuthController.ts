@@ -36,7 +36,7 @@ class AuthController {
         createdAt: user.createdAt,
       };
 
-      return response.json(collection);
+      return response.status(201).json(collection);
     } catch (error) {
       return response.status(500).send({
         error: 'Registration failed',
@@ -91,9 +91,7 @@ class AuthController {
       const userExists = await User.findOne({ email });
 
       if (!userExists) {
-        return response.status(400).json({
-          message: 'User not found',
-        });
+        return response.status(404).json({ message: 'User not found' });
       }
 
       const token = crypto.randomBytes(20).toString('hex');
@@ -133,7 +131,7 @@ class AuthController {
       const userExists = await User.findOne({ email }).select('+passwordResetToken passwordResetExpires');
 
       if (!userExists) {
-        return response.status(400).json({ message: 'User not found' });
+        return response.status(404).json({ message: 'User not found' });
       }
 
       if (token !== userExists.passwordResetToken) {
@@ -153,6 +151,17 @@ class AuthController {
       return response.status(202).json({ message: 'Password changed' });
     } catch (error) {
       return response.status(400).json({ message: 'Error recovery password, try again' });
+    }
+  }
+
+  public async logout(request: Request, response: Response) {
+    const { token } = request.body;
+
+    try {
+      return response.json(await JwtResources.revoke(token));
+      // return response.status(400).json(token);
+    } catch (err) {
+      return response.status(400).json({ message: 'error invalidating token', error: err });
     }
   }
 }

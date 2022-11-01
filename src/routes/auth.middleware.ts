@@ -26,7 +26,7 @@ export function authMiddleware(request: Middleware.RequestWithUser, response: Re
       return response.status(401).json({ message: 'Token invalid' });
     }
 
-    request.user = decoded.id;
+    request.idUser = decoded.id;
 
     return next();
   });
