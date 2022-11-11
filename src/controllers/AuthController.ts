@@ -37,7 +37,7 @@ class AuthController {
 
       }, (error) => {
         if (error) {
-          return response.status(400).json({ message: 'Cannot send forgot password email' });
+          return response.status(400).json({ message: 'Cannot send email' });
         }
 
         const collection: UserData.UserPayload = {
