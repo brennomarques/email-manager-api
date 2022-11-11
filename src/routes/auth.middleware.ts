@@ -31,3 +31,17 @@ export function authMiddleware(request: Middleware.RequestWithUser, response: Re
     return next();
   });
 }
+
+export function verifyToken(request: Middleware.RequestWithUser, response: Response, next: NextFunction) {
+  const { token } = request.params;
+
+  jwt.verify(token, process.env.SECRET, (err, decoded) => {
+    if (err) {
+      return response.status(401).json({ message: 'Token invalid', error: err });
+    }
+
+    request.idUser = decoded.id;
+
+    return next();
+  });
+}

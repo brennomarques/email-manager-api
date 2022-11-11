@@ -1,17 +1,21 @@
 import User from '@models/User';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { Middleware } from 'src/core/@types';
 
 class UsersController {
-  public async show(request: Request, response: Response) {
+  public async show(request: Middleware.RequestWithUser, response: Response) {
+    const resUser = request.idUser;
+
     try {
-      const users = await User.find();
-      return response.json(users);
-    } catch (error) {
-      return response.status(500).send({
-        error: 'Something wrong happened, try again',
-        message: error,
-      });
+      const userExists = await User.findById(resUser);
+
+      if (!userExists) {
+        return response.status(404).json({ message: 'User already exists' });
+      }
+
+      return response.json(userExists);
+    } catch (err) {
+      return response.status(400).json({ message: 'Something wrong happened, try again', error: err });
     }
   }
 

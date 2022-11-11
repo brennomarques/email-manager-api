@@ -1,7 +1,7 @@
 import User from '@models/User';
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import { UserData, USER_STATUS } from 'src/core/@types';
+import { Middleware, UserData, USER_STATUS } from 'src/core/@types';
 import JwtResources from '@resources/jwt/JwtResources';
 import crypto from 'crypto';
 import mailer from '@config/mailer';
@@ -13,34 +13,48 @@ class AuthController {
     } = request.body;
 
     const status = USER_STATUS.CONFIRM_REGISTRATION;
+    const avatar = '';
 
     try {
       const userExists = await User.findOne({ email });
 
       if (userExists) {
-        return response.status(400).json({
-          message: 'User already exists',
-        });
+        return response.status(400).json({ message: 'User already exists' });
       }
 
       const user = await User.create({
-        name, email, password, status, role,
+        name, email, password, status, role, avatar,
       });
 
-      const collection: UserData.UserPayload = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        status: user.status,
-        role: user.role,
-        createdAt: user.createdAt,
-      };
+      const token = await JwtResources.generateToken({ id: user.id });
 
-      return response.status(201).json(collection);
-    } catch (error) {
+      mailer.sendMail({
+        to: email,
+        from: process.env.MAIL_FROM_ADDRESS,
+        template: 'actions/welcome',
+        subject: 'Bem vido(a) ao Gerenciador de e-mail! Confirmação de conta',
+        context: { token: token.access_token },
+
+      }, (error) => {
+        if (error) {
+          return response.status(400).json({ message: 'Cannot send forgot password email' });
+        }
+
+        const collection: UserData.UserPayload = {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          status: user.status,
+          role: user.role,
+          createdAt: user.createdAt,
+        };
+
+        return response.status(201).json(collection);
+      });
+    } catch (err) {
       return response.status(500).send({
-        error: 'Registration failed',
-        message: error,
+        message: 'Registration failed',
+        error: err,
       });
     }
   }
@@ -70,16 +84,14 @@ class AuthController {
       }
 
       if (!await bcrypt.compare(password, userExists.password)) {
-        return response.status(401).json({
-          message: 'User invalid, check.',
-        });
+        return response.status(401).json({ message: 'Invalid username or password, check' });
       }
 
       return response.json(await JwtResources.generateToken({ id: userExists.id }));
-    } catch (error) {
+    } catch (err) {
       return response.status(500).send({
-        error: 'Registration failed',
-        message: error,
+        message: 'Registration failed',
+        error: err,
       });
     }
   }
@@ -159,9 +171,30 @@ class AuthController {
 
     try {
       return response.json(await JwtResources.revoke(token));
-      // return response.status(400).json(token);
     } catch (err) {
       return response.status(400).json({ message: 'error invalidating token', error: err });
+    }
+  }
+
+  public async verifyAccount(request: Middleware.RequestWithUser, response: Response) {
+    const resUser = request.idUser;
+
+    try {
+      const userExists = await User.findById(resUser);
+
+      if (!userExists) {
+        return response.status(404).json({ message: 'User already exists' });
+      }
+
+      if (userExists.status === USER_STATUS.DISABLED) {
+        return response.status(401).json({ message: 'error invalidating user, try again' });
+      }
+
+      await User.findByIdAndUpdate(userExists.id, { status: USER_STATUS.ENABLED }, { new: true });
+
+      return response.status(200).json({ massage: 'successful invalidating user' });
+    } catch (err) {
+      return response.status(400).json({ message: 'error invalidating user', error: err });
     }
   }
 }

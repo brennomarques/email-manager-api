@@ -17,12 +17,36 @@
     <table width="100%" border="0" cellspacing="10" cellpadding="0">
       <tr>
           <td align="center" valign="top" style="text-align:center; color: #555555;">
-              <table border="0" cellspacing="0" cellpadding="0"
-                  style="margin-left: auto; margin-right: auto; background-color: #FCFCFC;" width="600">
+              <table border="0" cellspacing="0" cellpadding="0" style="margin-left: auto; margin-right: auto; background-color: #FCFCFC;" width="600">
                   <tr>
                       <!-- body content -->
                       <td align="center" valign="top" style="text-align: center; padding: 36px 66px 85px;">
-                          @yield('content')
+
+                        <img src="/src/public/asset/icon/logo.png" width="400">
+
+                        <h3 style="color: #013D52; font-size: 1.5rem;">Bem-vindo ao Gerenciador de e-mail!</h3>
+
+                        <img src="/src/public/asset/images/mails/welcome.png" width="300">
+
+                        <p>Falta pouco para você começar a utilizar o Gerenciador de e-mail e simplificar os seus negócios.</p>
+                        <p>Para isso, confirme o seu e-mail clicando no botão abaixo:</p>
+
+                        <p style="margin-top: 20px; margin-bottom: 35px;">
+                          <a href="#" target="_blank" style="
+                            display: inline-block;
+                            color: rgb(0, 74, 98);
+                            background-color: rgb(62, 203, 144);
+                            padding: 12px 30px;
+                            border-radius: 5px;
+                            box-shadow: 0px 3px 6px #00000029;
+                            text-decoration: none;
+                            font-weight: 600;
+                          ">
+                            Confirma
+                          </a>
+                        </p>
+
+                        <p>token: {{ token }}</p>
                       </td>
                   </tr>
               </table>
@@ -33,7 +57,7 @@
                       <td align="center" valign="top" style="text-align: center; padding: 36px 66px;">
                         <p style="text-align: left; font-size: 0.875rem; margin: 0;">
                           <p style="color: #013D52">
-                              Este e-mail foi enviado por Manager
+                              Este e-mail foi enviado por Gerenciado de e-mail
                               <br>
                               Em caso de dúvidas, entre em contato conosco.
                           </p>
@@ -60,3 +84,7 @@
   </body>
 
 </html>
+
+
+
+

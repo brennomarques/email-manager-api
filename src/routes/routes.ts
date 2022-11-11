@@ -1,7 +1,7 @@
 import AuthController from '@controllers/AuthController';
 import UsersController from '@controllers/UsersController';
 import { Router } from 'express';
-import { authMiddleware } from './auth.middleware';
+import { authMiddleware, verifyToken } from './auth.middleware';
 
 const routes = Router();
 
@@ -11,7 +11,7 @@ routes.post('/oauth/register', AuthController.register);
 routes.post('/oauth/forgot-password', AuthController.forgotPassword);
 routes.post('/oauth/recovery-password', AuthController.recoveryPassword);
 routes.post('/oauth/revoke', AuthController.logout);
-// routes.post('/oauth/verify-account', AuthController.recoveryPassword);
+routes.post('/oauth/verify-account/:token', verifyToken, AuthController.verifyAccount);
 
 // User route
 routes.get('/user', authMiddleware, UsersController.show);
