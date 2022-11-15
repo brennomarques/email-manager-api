@@ -40,6 +40,7 @@ const User = new mongoose.Schema(
     avatar: {
       type: String,
       require: false,
+      default: null,
     },
 
     passwordResetToken: {

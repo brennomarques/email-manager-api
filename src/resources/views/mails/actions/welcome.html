@@ -22,17 +22,18 @@
                       <!-- body content -->
                       <td align="center" valign="top" style="text-align: center; padding: 36px 66px 85px;">
 
-                        <img src="/src/public/asset/icon/logo.png" width="400">
+                        <img src="{{ image }}/icons/logo.png" alt="logo" width="400">
+
 
                         <h3 style="color: #013D52; font-size: 1.5rem;">Bem-vindo ao Gerenciador de e-mail!</h3>
 
-                        <img src="/src/public/asset/images/mails/welcome.png" width="300">
+                        <img src="{{ image }}/images/welcome.png" alt="welcome" width="300">
 
                         <p>Falta pouco para você começar a utilizar o Gerenciador de e-mail e simplificar os seus negócios.</p>
                         <p>Para isso, confirme o seu e-mail clicando no botão abaixo:</p>
 
                         <p style="margin-top: 20px; margin-bottom: 35px;">
-                          <a href="#" target="_blank" style="
+                          <a href="{{ link }}" target="_blank" style="
                             display: inline-block;
                             color: rgb(0, 74, 98);
                             background-color: rgb(62, 203, 144);
@@ -46,7 +47,6 @@
                           </a>
                         </p>
 
-                        <p>token: {{ token }}</p>
                       </td>
                   </tr>
               </table>

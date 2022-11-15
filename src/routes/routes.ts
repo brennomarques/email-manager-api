@@ -1,6 +1,7 @@
 import AuthController from '@controllers/AuthController';
 import UsersController from '@controllers/UsersController';
-import { Router } from 'express';
+import express, { Router } from 'express';
+import path from 'path';
 import { authMiddleware, verifyToken } from './auth.middleware';
 
 const routes = Router();
@@ -16,5 +17,8 @@ routes.post('/oauth/verify-account/:token', verifyToken, AuthController.verifyAc
 // User route
 routes.get('/user', authMiddleware, UsersController.show);
 routes.put('/user/:id', authMiddleware, UsersController.update);
+
+// Get image for use in API
+routes.use('/image', express.static(path.resolve('./src/public/assets')));
 
 export default routes;

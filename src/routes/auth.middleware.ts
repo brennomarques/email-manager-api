@@ -21,7 +21,7 @@ export function authMiddleware(request: Middleware.RequestWithUser, response: Re
     return response.status(401).json({ message: 'Token malformatted' });
   }
 
-  jwt.verify(token, process.env.SECRET, (error, decoded) => {
+  jwt.verify(token, process.env.APP_SECRET, (error, decoded) => {
     if (error) {
       return response.status(401).json({ message: 'Token invalid' });
     }
@@ -35,7 +35,7 @@ export function authMiddleware(request: Middleware.RequestWithUser, response: Re
 export function verifyToken(request: Middleware.RequestWithUser, response: Response, next: NextFunction) {
   const { token } = request.params;
 
-  jwt.verify(token, process.env.SECRET, (err, decoded) => {
+  jwt.verify(token, process.env.APP_SECRET, (err, decoded) => {
     if (err) {
       return response.status(401).json({ message: 'Token invalid', error: err });
     }

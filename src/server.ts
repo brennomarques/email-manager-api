@@ -11,7 +11,7 @@ const app = express();
 connectDB();
 
 app.use(express.json());
-app.use(routes);
+app.use('/api', routes);
 
 app.listen(PORT, HOST, () => {
   console.log(`Back-end started in ${PORT} port! 👈️`);

@@ -13,7 +13,6 @@ class AuthController {
     } = request.body;
 
     const status = USER_STATUS.CONFIRM_REGISTRATION;
-    const avatar = '';
 
     try {
       const userExists = await User.findOne({ email });
@@ -23,7 +22,7 @@ class AuthController {
       }
 
       const user = await User.create({
-        name, email, password, status, role, avatar,
+        name, email, password, status, role,
       });
 
       const token = await JwtResources.generateToken({ id: user.id });
@@ -33,7 +32,10 @@ class AuthController {
         from: process.env.MAIL_FROM_ADDRESS,
         template: 'actions/welcome',
         subject: 'Bem vido(a) ao Gerenciador de e-mail! Confirmação de conta',
-        context: { token: token.access_token },
+        context: {
+          link: `${process.env.APP_URL}:${process.env.APP_PORT}/oauth/verify-account/${token.access_token}`,
+          image: `${process.env.APP_URL}:${process.env.APP_PORT}/api/image`,
+        },
 
       }, (error) => {
         if (error) {
@@ -106,14 +108,14 @@ class AuthController {
         return response.status(404).json({ message: 'User not found' });
       }
 
-      const token = crypto.randomBytes(20).toString('hex');
+      const accessToken = crypto.randomBytes(20).toString('hex');
 
       const now = new Date();
       now.setHours(now.getHours() + 1);
 
       await User.findByIdAndUpdate(userExists.id, {
         $set: {
-          passwordResetToken: token,
+          passwordResetToken: accessToken,
           passwordResetExpires: now,
         },
       });
@@ -122,8 +124,11 @@ class AuthController {
         to: email,
         from: process.env.MAIL_FROM_ADDRESS,
         template: 'auth/forgotPassword',
-        subject: 'Confirmação de conta',
-        context: { token },
+        subject: `${userExists.name}, Esqueceu sua senha?`,
+        context: {
+          image: `${process.env.APP_URL}:${process.env.APP_PORT}/api/image`,
+          token: accessToken,
+        },
 
       }, (error) => {
         if (error) {
@@ -192,7 +197,7 @@ class AuthController {
 
       await User.findByIdAndUpdate(userExists.id, { status: USER_STATUS.ENABLED }, { new: true });
 
-      return response.status(200).json({ massage: 'successful invalidating user' });
+      return response.status(302).json({ massage: 'successful invalidating user' });
     } catch (err) {
       return response.status(400).json({ message: 'error invalidating user', error: err });
     }
