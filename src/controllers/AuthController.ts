@@ -5,6 +5,7 @@ import { Middleware, UserData, USER_STATUS } from 'src/core/@types';
 import JwtResources from '@resources/jwt/JwtResources';
 import crypto from 'crypto';
 import mailer from '@config/mailer';
+import BlackList from '@models/BlackList';
 
 class AuthController {
   async register(request: Request, response: Response) {
@@ -175,7 +176,11 @@ class AuthController {
     const { token } = request.body;
 
     try {
-      return response.json(await JwtResources.revoke(token));
+      const idUser = await JwtResources.decodeToken(token);
+
+      await BlackList.create({ idUser, token });
+
+      return response.status(200).json({ revoked: true });
     } catch (err) {
       return response.status(400).json({ message: 'error invalidating token', error: err });
     }

@@ -28,4 +28,8 @@ export class Format {
   public static conversionToBoolean(value: string): boolean {
     return value.toLowerCase() === 'true' || value === '1';
   }
+
+  public static nowInSeconds(): number {
+    return Math.floor(Date.now() / 1000);
+  }
 }

@@ -8,6 +8,11 @@ class JwtResources {
     };
   }
 
+  public async decodeToken(token: string) {
+    const decode = jwt.decode(token);
+    return decode.id;
+  }
+
   public async revoke(token: string) {
     const newToken = jwt.sign(token, process.env.APP_SECRET, { expires_in: 1 });
 
