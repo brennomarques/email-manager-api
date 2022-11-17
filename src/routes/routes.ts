@@ -3,8 +3,6 @@ import UsersController from '@controllers/UsersController';
 import express, { Router } from 'express';
 import path from 'path';
 import AuthMiddleware from './AuthMiddleware';
-// import { authMiddleware, verifyToken } from './AuthMiddleware';
-// import { AuthMiddleware } from './AuthMiddleware';
 
 const routes = Router();
 
