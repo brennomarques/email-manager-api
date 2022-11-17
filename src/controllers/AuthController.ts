@@ -5,9 +5,9 @@ import { Middleware, UserData, USER_STATUS } from 'src/core/@types';
 import JwtResources from '@resources/jwt/JwtResources';
 import crypto from 'crypto';
 import mailer from '@config/mailer';
-import BlackList from '@models/BlackList';
+import { BlackListController } from './BlackListController';
 
-class AuthController {
+class AuthController extends BlackListController {
   async register(request: Request, response: Response) {
     const {
       name, email, password, role,
@@ -16,6 +16,10 @@ class AuthController {
     const status = USER_STATUS.CONFIRM_REGISTRATION;
 
     try {
+      if (!(name && email && password && role)) {
+        return response.status(400).json({ message: 'Required field', error: ['email', 'password', 'token'] });
+      }
+
       const userExists = await User.findOne({ email });
 
       if (userExists) {
@@ -66,6 +70,10 @@ class AuthController {
     const { email, password } = request.body;
 
     try {
+      if (!(email && password)) {
+        return response.status(400).json({ message: 'Required field', error: ['email', 'password'] });
+      }
+
       const userExists = await User.findOne({ email }).select('+password');
 
       if (!userExists) {
@@ -87,7 +95,7 @@ class AuthController {
       }
 
       if (!await bcrypt.compare(password, userExists.password)) {
-        return response.status(401).json({ message: 'Invalid username or password, check' });
+        return response.status(401).json({ message: 'Invalid username and password combination' });
       }
 
       return response.json(await JwtResources.generateToken({ id: userExists.id }));
@@ -103,6 +111,10 @@ class AuthController {
     const { email } = request.body;
 
     try {
+      if (!(email)) {
+        return response.status(400).json({ message: 'Required field', error: ['email'] });
+      }
+
       const userExists = await User.findOne({ email });
 
       if (!userExists) {
@@ -135,7 +147,7 @@ class AuthController {
         if (error) {
           return response.status(400).json({ message: 'Cannot send forgot password email' });
         }
-        return response.status(200).json({ message: 'Forgot Password success' });
+        return response.status(200).json({ message: 'Email send forgot password' });
       });
     } catch (error) {
       return response.status(400).json({ message: 'Error on forgot password, try again' });
@@ -143,9 +155,13 @@ class AuthController {
   }
 
   async recoveryPassword(request: Request, response: Response) {
-    const { email, token, password } = request.body;
+    const { email, password, token } = request.body;
 
     try {
+      if (!(email && password && token)) {
+        return response.status(400).json({ message: 'Required field', error: ['email', 'password', 'token'] });
+      }
+
       const userExists = await User.findOne({ email }).select('+passwordResetToken passwordResetExpires');
 
       if (!userExists) {
@@ -176,18 +192,20 @@ class AuthController {
     const { token } = request.body;
 
     try {
-      const idUser = await JwtResources.decodeToken(token);
+      if (!(token)) {
+        return response.status(400).json({ message: 'Required field', error: ['token'] });
+      }
 
-      await BlackList.create({ idUser, token });
+      const revoked = await super.storeInBlackList(token);
 
-      return response.status(200).json({ revoked: true });
+      return response.status(200).json(revoked);
     } catch (err) {
       return response.status(400).json({ message: 'error invalidating token', error: err });
     }
   }
 
   public async verifyAccount(request: Middleware.RequestWithUser, response: Response) {
-    const resUser = request.idUser;
+    const resUser = request.loggedUser;
 
     try {
       const userExists = await User.findById(resUser);

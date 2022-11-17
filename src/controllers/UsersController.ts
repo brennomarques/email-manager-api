@@ -4,7 +4,7 @@ import { Middleware } from 'src/core/@types';
 
 class UsersController {
   public async show(request: Middleware.RequestWithUser, response: Response) {
-    const resUser = request.idUser;
+    const resUser = request.loggedUser;
 
     try {
       const userExists = await User.findById(resUser);
@@ -21,7 +21,7 @@ class UsersController {
 
   public async update(request: Middleware.RequestWithUser, response: Response) {
     const idUser = request.params.id;
-    const resUser = request.idUser;
+    const resUser = request.loggedUser;
 
     const { name, role, avatar } = request.body;
 
