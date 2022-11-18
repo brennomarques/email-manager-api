@@ -35,7 +35,7 @@ class AuthController extends BlackListController {
       mailer.sendMail({
         to: email,
         from: process.env.MAIL_FROM_ADDRESS,
-        template: 'actions/welcome',
+        template: 'auth/welcome',
         subject: 'Bem vido(a) ao Gerenciador de e-mail! Confirmação de conta',
         context: {
           link: `${process.env.APP_URL}:${process.env.APP_PORT}/oauth/verify-account/${token.access_token}`,
