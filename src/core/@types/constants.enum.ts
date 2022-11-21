@@ -6,3 +6,8 @@ export const USER_STATUS = {
   DISABLED: 1,
   CONFIRM_REGISTRATION: 2,
 };
+
+export const EMPTY_OBJECT = {
+  EMPTY: 0,
+  NOT_EMPTY: 1,
+};

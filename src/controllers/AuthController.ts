@@ -60,7 +60,7 @@ class AuthController extends BlackListController {
       });
     } catch (err) {
       return response.status(500).send({
-        message: 'Registration failed',
+        message: 'Error creating new register',
         error: err,
       });
     }
