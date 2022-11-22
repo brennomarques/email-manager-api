@@ -29,8 +29,9 @@ const Contact = new mongoose.Schema(
       default: true,
     },
 
-    IdUser: {
-      type: String,
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
       require: true,
       select: true,
     },

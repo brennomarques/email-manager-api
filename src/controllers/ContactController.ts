@@ -6,7 +6,7 @@ import { ContactData } from 'src/core/@types/contact.type';
 class ContactController {
   public async index(request: Request, response: Response) {
     try {
-      const contacts = await Contact.find();
+      const contacts = await Contact.find().populate({ path: 'owner', select: ['email', 'name'] });
 
       return response.status(200).json(contacts);
     } catch (err) {
@@ -18,7 +18,7 @@ class ContactController {
     const idContact = request.params.id;
 
     try {
-      const contactExists = await Contact.findById(idContact);
+      const contactExists = await Contact.findById(idContact).populate({ path: 'owner', select: ['email', 'name'] });
 
       if (!contactExists) {
         return response.status(404).json({ message: 'Contact already exists' });
@@ -49,16 +49,16 @@ class ContactController {
       }
 
       const contact = await Contact.create({
-        name, email, phone, status, IdUser: resUser,
+        name, email, phone, status, owner: resUser,
       });
 
       const collection: ContactData.ContactPayload = {
         id: contact.id,
-        idUser: contact.IdUser,
         name: contact.name,
         email: contact.email,
         phone: contact.phone,
         status: contact.status,
+        owner: contact.owner,
         createdAt: contact.createdAt,
       };
 

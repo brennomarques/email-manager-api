@@ -1,3 +1,5 @@
+// import mongoose from 'mongoose';
+
 export namespace ContactData {
 
   export interface ContactPayload {
@@ -6,7 +8,7 @@ export namespace ContactData {
     email: string;
     phone: string;
     status: boolean;
-    idUser: string;
+    owner: any;
     createdAt: Date;
   }
 
