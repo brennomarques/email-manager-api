@@ -5,8 +5,21 @@ import { ContactData } from 'src/core/@types/contact.type';
 
 class ContactController {
   public async index(request: Request, response: Response) {
+    const filter = {};
+
     try {
-      const contacts = await Contact.find().populate({ path: 'owner', select: ['email', 'name'] });
+      if (request.query.filter) {
+        const query = request.query.filter as [];
+
+        query.forEach((item: any) => {
+          if (item.field === 'email') {
+            filter[request.query.filter[1].field] = { $regex: `.*${request.query.filter[1].value}.*` };
+          }
+          filter[request.query.filter[0].field] = request.query.filter[0].value;
+        });
+      }
+
+      const contacts = await Contact.find(filter).populate({ path: 'owner', select: ['email', 'name'] });
 
       return response.status(200).json(contacts);
     } catch (err) {
