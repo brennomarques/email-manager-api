@@ -1,7 +1,6 @@
 import Contact from '@models/Contact';
 import { Request, Response } from 'express';
-import { EMPTY_OBJECT, Middleware } from 'src/core/@types';
-import { ContactData } from 'src/core/@types/contact.type';
+import { ContactData, EMPTY_OBJECT, Middleware } from 'src/core/@types';
 
 class ContactController {
   public async index(request: Request, response: Response) {
@@ -45,27 +44,24 @@ class ContactController {
 
   public async store(request: Middleware.RequestWithUser, response: Response) {
     const resUser = request.loggedUser;
-
-    const {
-      name, email, phone, status,
-    } = request.body;
+    const payload: ContactData.Payload = request.body;
 
     try {
-      if (!(name && email)) {
+      if (!(payload.name && payload.email)) {
         return response.status(400).json({ message: 'Required field', error: ['name', 'email'] });
       }
 
-      const contactExists = await Contact.findOne({ email });
+      const contactExists = await Contact.findOne({ email: payload.email });
 
       if (contactExists) {
         return response.status(400).json({ message: 'Constact already exists' });
       }
 
       const contact = await Contact.create({
-        name, email, phone, status, owner: resUser,
+        name: payload.name, email: payload.email, phone: payload.phone, status: payload.status, owner: resUser,
       });
 
-      const collection: ContactData.ContactPayload = {
+      const collection: ContactData.Contact = {
         id: contact.id,
         name: contact.name,
         email: contact.email,
@@ -83,11 +79,10 @@ class ContactController {
 
   public async update(request: Middleware.RequestWithUser, response: Response) {
     const idContact = request.params.id;
-
-    const { name, phone, status } = request.body;
+    const payload: ContactData.Update = request.body;
 
     try {
-      if (Object.values(request.body).length === EMPTY_OBJECT.EMPTY) {
+      if (Object.values(payload).length === EMPTY_OBJECT.EMPTY) {
         return response.status(400).json({ message: 'Required field', error: ['name', 'phone', 'status'] });
       }
 
@@ -97,7 +92,11 @@ class ContactController {
         return response.status(404).json({ message: 'Contact already exists' });
       }
 
-      const update = await Contact.findByIdAndUpdate(idContact, { name, phone, status }, { new: true });
+      const update = await Contact.findByIdAndUpdate(
+        idContact,
+        { name: payload.name, phone: payload.phone, status: payload.status },
+        { new: true },
+      );
 
       return response.status(200).json(update);
     } catch (err) {
