@@ -1,5 +1,6 @@
 import AuthController from '@controllers/AuthController';
 import ContactController from '@controllers/ContactController';
+import SendMailController from '@controllers/SendMailController';
 import UsersController from '@controllers/UsersController';
 import express, { Router } from 'express';
 import path from 'path';
@@ -25,6 +26,9 @@ routes.get('/contact/:id', AuthMiddleware.middleware, ContactController.show);
 routes.post('/contact', AuthMiddleware.middleware, ContactController.store);
 routes.put('/contact/:id', AuthMiddleware.middleware, ContactController.update);
 routes.delete('/contact/:id', AuthMiddleware.middleware, ContactController.destroy);
+
+// Send mail
+routes.post('/send-mail', AuthMiddleware.middleware, SendMailController.sendMail);
 
 // Get image for use in API
 routes.use('/image', express.static(path.resolve('./src/public/assets')));

@@ -1,7 +1,4 @@
-// import mongoose from 'mongoose';
-
 export namespace ContactData {
-
   export interface ContactPayload {
     id: string;
     name: string;
@@ -11,7 +8,6 @@ export namespace ContactData {
     owner: any;
     createdAt: Date;
   }
-
   export interface FormPayload {
     name: string;
     email: string;
