@@ -1,15 +1,16 @@
 export namespace UserData {
-
-  export interface userJwt {
-    id: string;
-  }
-  export interface UserPayload {
+  export interface Me {
     id: string;
     name: string;
     email: string;
-    status: number;
     role: string;
+    status?: number;
+    avatar: string;
+    dateAt: timestamps;
+  }
+  export interface timestamps {
     createdAt: Date;
+    updatedAt: Date;
   }
 
   export interface FormPayload {

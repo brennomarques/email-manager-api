@@ -1,6 +1,6 @@
 import User from '@models/User';
 import { Response } from 'express';
-import { Middleware } from 'src/core/@types';
+import { Middleware, UserData } from 'src/core/@types';
 
 class UsersController {
   public async show(request: Middleware.RequestWithUser, response: Response) {
@@ -13,7 +13,19 @@ class UsersController {
         return response.status(404).json({ message: 'User already exists' });
       }
 
-      return response.json(userExists);
+      const me: UserData.Me = {
+        id: userExists.id,
+        name: userExists.name,
+        email: userExists.email,
+        role: userExists.role,
+        avatar: userExists.avatar,
+        dateAt: {
+          createdAt: userExists.get('createdAt'),
+          updatedAt: userExists.get('updatedAt'),
+        },
+      };
+
+      return response.json(me);
     } catch (err) {
       return response.status(400).json({ message: 'Something wrong happened, try again', error: err });
     }
@@ -38,7 +50,20 @@ class UsersController {
 
       const update = await User.findByIdAndUpdate(idUser, { name, role, avatar }, { new: true });
 
-      return response.status(200).json(update);
+      const me: UserData.Me = {
+        id: update.id,
+        name: update.name,
+        email: update.email,
+        role: update.role,
+        status: userExists.status,
+        avatar: update.avatar,
+        dateAt: {
+          createdAt: update.get('createdAt'),
+          updatedAt: userExists.get('updatedAt'),
+        },
+      };
+
+      return response.status(200).json(me);
     } catch (err) {
       return response.status(400).send({ message: 'Error updating user', error: err });
     }
