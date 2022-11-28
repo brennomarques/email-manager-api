@@ -5,8 +5,8 @@ export namespace UserData {
     email: string;
     role: string;
     status?: number;
-    avatar: string;
-    dateAt: timestamps;
+    avatar?: string;
+    dateAt?: timestamps;
   }
   export interface timestamps {
     createdAt: Date;

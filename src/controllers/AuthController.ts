@@ -47,13 +47,16 @@ class AuthController extends BlackListController {
           return response.status(400).json({ message: 'Cannot send email' });
         }
 
-        const collection: UserData.UserPayload = {
+        const collection: UserData.Me = {
           id: user.id,
           name: user.name,
           email: user.email,
           status: user.status,
           role: user.role,
-          createdAt: user.createdAt,
+          dateAt: {
+            createdAt: user.get('createdAt'),
+            updatedAt: user.get('updatedAt'),
+          },
         };
 
         return response.status(201).json(collection);
