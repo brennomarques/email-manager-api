@@ -11,9 +11,10 @@ class ContactController {
         const query = request.query.filter as [];
 
         query.forEach((item: any) => {
-          if (item.field === 'name') {
+          if (item.field === 'email') {
             filter[request.query.filter[1].field] = { $regex: `.*${request.query.filter[1].value}.*`, $options: 'i' };
           }
+
           filter[request.query.filter[0].field] = request.query.filter[0].value;
         });
       }
