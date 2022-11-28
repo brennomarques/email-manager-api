@@ -9,31 +9,32 @@ import { BlackListController } from './BlackListController';
 
 class AuthController extends BlackListController {
   async register(request: Request, response: Response) {
-    const {
-      name, email, password, role,
-    } = request.body;
-
-    const status = USER_STATUS.CONFIRM_REGISTRATION;
+    const payload: UserData.FormPayload = {
+      name: request.body.name,
+      email: request.body.email,
+      password: request.body.password,
+      role: request.body.role,
+    };
 
     try {
-      if (!(name && email && password && role)) {
-        return response.status(400).json({ message: 'Required field', error: ['email', 'password', 'token'] });
+      if (!(payload.name && payload.email && payload.password)) {
+        return response.status(400).json({ message: 'Required field', error: ['name', 'email', 'password'] });
       }
 
-      const userExists = await User.findOne({ email });
+      const userExists = await User.findOne({ email: payload.email });
 
       if (userExists) {
         return response.status(400).json({ message: 'User already exists' });
       }
 
       const user = await User.create({
-        name, email, password, status, role,
+        name: payload.name, email: payload.email, password: payload.password, role: payload.role,
       });
 
       const token = await JwtResources.generateToken({ id: user.id });
 
       mailer.sendMail({
-        to: email,
+        to: payload.email,
         from: process.env.MAIL_FROM_ADDRESS,
         template: 'auth/welcome',
         subject: 'Bem vido(a) ao Gerenciador de e-mail! Confirmação de conta',

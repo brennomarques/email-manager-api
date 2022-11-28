@@ -17,6 +17,7 @@ export namespace UserData {
     name: string;
     password: string;
     email: string;
+    role?: string;
   }
 
 }

@@ -1,6 +1,12 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
+const STATUS = {
+  ENABLED: 0,
+  DISABLED: 1,
+  CONFIRM_REGISTRATION: 2,
+};
+
 const User = new mongoose.Schema(
   {
 
@@ -25,6 +31,7 @@ const User = new mongoose.Schema(
     status: {
       type: Number,
       require: true,
+      default: STATUS.CONFIRM_REGISTRATION,
     },
 
     email_verified_at: {
@@ -35,6 +42,7 @@ const User = new mongoose.Schema(
     role: {
       type: String,
       require: true,
+      default: null,
     },
 
     avatar: {
