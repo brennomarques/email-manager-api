@@ -17,9 +17,11 @@ const User = new mongoose.Schema(
 
     email: {
       type: String,
-      require: true,
+      trim: true,
+      required: [true, 'Please enter your email'],
       unique: true,
       lowercase: true,
+      validate: [validateEmail, 'Please enter a valid email'],
     },
 
     password: {
@@ -80,5 +82,11 @@ User.pre('save', async function hashPassword(next) {
   this.password = hash;
   next();
 });
+
+function validateEmail(email: string) {
+  // eslint-disable-next-line no-useless-escape
+  const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  return reg.test(email);
+}
 
 export default mongoose.model('User', User);

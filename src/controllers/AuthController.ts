@@ -43,9 +43,9 @@ class AuthController extends BlackListController {
           image: `${process.env.APP_URL}:${process.env.APP_PORT}/api/image`,
         },
 
-      }, (error) => {
-        if (error) {
-          return response.status(400).json({ message: 'Cannot send email' });
+      }, (err: any) => {
+        if (err) {
+          return response.status(400).json({ message: 'Cannot send email', error: err });
         }
 
         const collection: UserData.Me = {
